@@ -15,9 +15,6 @@ def loc_gradient(summ_in_signal, err):
     return err * der_log_func(summ_in_signal)
 
 
-# def new_weight(old_weight, converg_step, loc_grad, out_signal):
-#     return old_weight - converg_step * loc_grad * out_signal
-
 def neuron_out_signal(w, x):
     summ_in_signal = np.dot(w, x)
     out_signal = log_func(summ_in_signal)
@@ -49,7 +46,7 @@ def back_prop_my_network(x, w11, w12, w21, f, err, converg_step):
     return w11, w12, w21
 
 
-lamd = 0.1  # шаг сходимости при корректировке весов
+lamd = 1  # шаг сходимости при корректировке весов
 N = 1000000  # количество итераций
 
 w11 = np.array([random.random() - 0.5, random.random() - 0.5,
@@ -61,21 +58,11 @@ w21 = np.array([random.random() - 0.5, random.random() - 0.5])  # 2
 f = [np.array([1.0, 1.0]), 1.0]
 # print(f)
 
-# input_data = [
-#     [np.array([0, 0, 0]), 0],
-#     [np.array([0, 0, 1]), 1],
-#     [np.array([0, 1, 0]), 0],
-#     [np.array([0, 1, 1]), 1],
-#     [np.array([1, 0, 0]), 0],
-#     [np.array([1, 0, 1]), 1],
-#     [np.array([1, 1, 0]), 0],
-#     [np.array([1, 1, 1]), 0]
-# ]
-
 input_data = [
     [np.array([0, 0, 0]), 0],
     [np.array([0, 0, 1]), 1],
     [np.array([0, 1, 0]), 0],
+    [np.array([0, 1, 1]), 1],
     [np.array([1, 0, 0]), 0],
     [np.array([1, 0, 1]), 1],
     [np.array([1, 1, 0]), 0],
@@ -91,7 +78,8 @@ for i in range(N):
     f[1] = my_network(x, w11, w12, w21, f)  # выходное значение сети
     error = f[1] - d
     error_array.append(error)
-    w11, w12, w21 = back_prop_my_network(x, w11, w12, w21, f, error, lamd)  # корректировка весов (изменение глобальных переменных)
+    w11, w12, w21 = back_prop_my_network(x, w11, w12, w21, f, error,
+                                         lamd)  # корректировка весов (изменение глобальных переменных)
     # print(f)
     # print(w11)
 
@@ -107,7 +95,7 @@ for i in range(N):
 # average_error = summ / len(input_data)
 # print(average_error)
 
-x = np.array([0, 1, 1])
+x = np.array([1, 1, 1])
 y = my_network(x, w11, w12, w21, f)
 print(y)
 
