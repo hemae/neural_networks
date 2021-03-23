@@ -53,6 +53,10 @@ x_train, x_test, y_train, y_test = get_data(N, M)
 
 x_train = preprocessing.normalize(x_train)
 x_test = preprocessing.normalize(x_test)
+y_train_min = min(y_train)
+y_train_max = max(y_train)
+y_train = preprocessing.normalize([y_train])[0]
+y_test = preprocessing.normalize([y_test])[0]
 
 # print(x_train)
 # print(x_test)
@@ -66,8 +70,8 @@ x_train_split, x_val_split, y_train_split, y_val_split = train_test_split(x_trai
 # # print(model.summary())
 
 model = keras.Sequential([
-    Dense(units=1, input_shape=(3,), activation='linear'),
-    Dense(1, activation='linear'),
+    Dense(units=1, input_dim=3, activation='sigmoid'),
+    # Dense(1, activation='linear'),
     # Dense(300, activation='relu'),
     # BatchNormalization(),
     # Dropout(0.8)
@@ -83,8 +87,8 @@ model.compile(
 model.fit(x_train_split, y_train_split, batch_size=100, epochs=10, validation_data=(x_val_split, y_val_split))
 
 pred = np.transpose(model.predict(x_test))[0]
-# print(pred)
-# print(y_test)
+print(pred)
+print(y_test)
 # y_test = np.transpose(y_test)
 
 percent_difference = (y_test - pred) / y_test * 100
