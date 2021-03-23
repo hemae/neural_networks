@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def relu(x, a=0):
+def relu(x, a=1):
     if x <= a:
         return 0
     else:
@@ -42,11 +42,11 @@ def initialize_total_weight_vector(network_scheme):
     return total_weight_vector
 
 
-network_scheme = [4, 5, 100, 2]
-input_vector = [-1, 1, -1, 1]
+network_scheme = [3, 1]
+input_vector = [-1, 1, -1]
 total_weight_vector = initialize_total_weight_vector(network_scheme)
 # print(total_weight_vector)
 
-forward_propogation = network(network_scheme, input_vector, total_weight_vector)
-print(forward_propogation)
+forward_propagation = network(network_scheme, input_vector, total_weight_vector)
+print(forward_propagation)
 
