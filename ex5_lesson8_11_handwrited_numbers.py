@@ -9,7 +9,7 @@ import numpy as np
 
 from tensorflow.keras.datasets import mnist
 from tensorflow import keras
-from tensorflow.keras.layers import Dense, Flatten, Dropout
+from tensorflow.keras.layers import Dense, Flatten, Dropout, BatchNormalization
 
 import matplotlib.pyplot as plt
 
@@ -59,6 +59,7 @@ model = keras.Sequential([
     Flatten(input_shape=(28, 28, 1)),
     # Dense(128, activation='relu'),
     Dense(300, activation='relu'),
+    BatchNormalization(),
     # Dropout(0.8),
     Dense(10, activation='softmax')
 ])
@@ -102,7 +103,7 @@ plt.show()
 
 # model.evaluate(x_test, y_test_cat)
 
-n = 0
+n = 2
 x = np.expand_dims(x_test[n], axis=0)
 res = model.predict(x)
 print(res)
