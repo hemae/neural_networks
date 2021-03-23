@@ -10,10 +10,9 @@ from tensorflow.keras.layers import Dense
 
 
 def get_data(N, M):
-    def get_random_data(N, from_value=0, to_value=1, error=0.01):
+    def get_random_data(N, from_value=0, to_value=1):
         data_range = to_value - from_value
         random_data = np.random.rand(N) * data_range + from_value
-        random_data = random_data + (np.random.rand(N) - 0.5) * data_range * error  # имитация ошибки при измерении
 
         return random_data
 
@@ -21,9 +20,9 @@ def get_data(N, M):
 
     # создаём обучающую выборку N векторов входных данных
     error = 0.05    # имитированная ошибка при измерении всех величин 5%
-    substance_amount = get_random_data(N, 4, 6, error)
-    temperature = get_random_data(N, 200, 400, error)
-    volume = get_random_data(N, 1, 10, error)
+    substance_amount = get_random_data(N, 4, 6)
+    temperature = get_random_data(N, 200, 400)
+    volume = get_random_data(N, 1, 10)
     pressure = R * substance_amount * temperature / volume
 
     x_train = np.transpose(np.array([substance_amount, temperature, volume]))
@@ -31,9 +30,9 @@ def get_data(N, M):
 
     # создаём тестовую выборку M векторов входных данных
     error = 0.06  # имитированная ошибка при измерении всех величин 5%
-    substance_amount = get_random_data(M, 6, 8, error)
-    temperature = get_random_data(M, 200, 450, error)
-    volume = get_random_data(M, 2, 12, error)
+    substance_amount = get_random_data(M, 6, 8)
+    temperature = get_random_data(M, 200, 450)
+    volume = get_random_data(M, 2, 12)
     pressure = R * substance_amount * temperature / volume
 
     x_test = np.transpose(np.array([substance_amount, temperature, volume]))
