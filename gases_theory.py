@@ -6,8 +6,8 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 from tensorflow import keras
-from tensorflow.keras.layers import Dense
 
+from tensorflow.keras.layers import Dense, Flatten, Dropout, BatchNormalization
 
 def get_data(N, M):
     def get_random_data(N, from_value=0, to_value=1):
@@ -44,12 +44,12 @@ def get_data(N, M):
 def normalize(np_list):
     np_list = np.transpose(np_list)
     for i in range(len(np_list)):
-        np_list[i] = np_list[i] / max(np_list[i])
+        np_list[i] = (np_list[i] - min(np_list[i])) / (max(np_list[i]) - min(np_list[i]))
     return np.transpose(np_list)
 
 
-N = 10000  # размер обучающей выборки
-M = 1000   # размер тестовой выборки
+N = 100000  # размер обучающей выборки
+M = 10000   # размер тестовой выборки
 x_train, x_test, y_train, y_test = get_data(N, M)
 
 # print(x_train)
@@ -59,8 +59,8 @@ x_train, x_test, y_train, y_test = get_data(N, M)
 
 x_train = normalize(x_train)
 x_test = normalize(x_test)
-y_mean = np.mean(y_train)
-y_train = y_train / max(y_train)
+# y_mean = np.mean(y_train)
+# y_train = y_train / max(y_train)
 
 # print(x_train)
 # print(x_test)
@@ -68,10 +68,25 @@ y_train = y_train / max(y_train)
 # случайным образом формируем обучающую и валидационную выборки с помощью sklearn (20%)
 x_train_split, x_val_split, y_train_split, y_val_split = train_test_split(x_train, y_train, test_size=0.2)
 
-model = keras.Sequential()
-model.add(Dense(units=1, input_shape=(3,), activation='linear'))
-model.compile(loss='mean_squared_error', optimizer='adam')
-# print(model.summary())
+# model = keras.Sequential()
+# model.add(Dense(units=1, input_shape=(3,), activation='linear'))
+# model.compile(loss='mean_squared_error', optimizer='adam')
+# # print(model.summary())
+
+model = keras.Sequential([
+    Dense(units=1, input_shape=(3,), activation='linear'),
+    Dense(1, activation='linear'),
+    # Dense(300, activation='relu'),
+    # BatchNormalization(),
+    # Dropout(0.8)
+])
+print(model.summary())
+
+# компиляция модели: оптимизация по Адаму, потери: наименьшие квадраты
+model.compile(
+    optimizer='adam',
+    loss='mean_squared_error'
+)
 
 model.fit(x_train_split, y_train_split, batch_size=100, epochs=10, validation_data=(x_val_split, y_val_split))
 
