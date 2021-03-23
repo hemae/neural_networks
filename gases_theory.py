@@ -41,15 +41,15 @@ def get_data(N, M):
     return x_train, x_test, y_train, y_test
 
 
-def normalization(np_list):
+def normalize(np_list):
     np_list = np.transpose(np_list)
     for i in range(len(np_list)):
         np_list[i] = np_list[i] / max(np_list[i])
     return np.transpose(np_list)
 
 
-N = 10  # размер обучающей выборки
-M = 5   # размер тестовой выборки
+N = 10000  # размер обучающей выборки
+M = 1000   # размер тестовой выборки
 x_train, x_test, y_train, y_test = get_data(N, M)
 
 # print(x_train)
@@ -57,8 +57,8 @@ x_train, x_test, y_train, y_test = get_data(N, M)
 # print(x_test)
 # print(y_test)
 
-x_train = normalization(x_train)
-x_test = normalization(x_test)
+x_train = normalize(x_train)
+x_test = normalize(x_test)
 y_mean = np.mean(y_train)
 y_train = y_train / max(y_train)
 
@@ -69,13 +69,11 @@ y_train = y_train / max(y_train)
 x_train_split, x_val_split, y_train_split, y_val_split = train_test_split(x_train, y_train, test_size=0.2)
 
 model = keras.Sequential()
-model.add(Dense(units=10, input_shape=(3,), activation='relu'))
-model.add(Dense(units=10, input_shape=(10,), activation='relu'))
-model.add(Dense(1, activation='linear'))
+model.add(Dense(units=1, input_shape=(3,), activation='linear'))
 model.compile(loss='mean_squared_error', optimizer='adam')
 # print(model.summary())
 
-model.fit(x_train_split, y_train_split, batch_size=5, epochs=5, validation_data=(x_val_split, y_val_split))
+model.fit(x_train_split, y_train_split, batch_size=100, epochs=10, validation_data=(x_val_split, y_val_split))
 
 pred = np.transpose(model.predict(x_test))[0]
 # print(pred)
