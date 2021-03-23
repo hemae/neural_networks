@@ -4,6 +4,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import numpy as np
 
 from sklearn.model_selection import train_test_split
+from sklearn import preprocessing
 
 from tensorflow import keras
 
@@ -41,15 +42,8 @@ def get_data(N, M):
     return x_train, x_test, y_train, y_test
 
 
-def normalize(np_list):
-    np_list = np.transpose(np_list)
-    for i in range(len(np_list)):
-        np_list[i] = (np_list[i] - min(np_list[i])) / (max(np_list[i]) - min(np_list[i]))
-    return np.transpose(np_list)
-
-
-N = 100000  # размер обучающей выборки
-M = 10000   # размер тестовой выборки
+N = 10000  # размер обучающей выборки
+M = 1000   # размер тестовой выборки
 x_train, x_test, y_train, y_test = get_data(N, M)
 
 # print(x_train)
@@ -57,10 +51,8 @@ x_train, x_test, y_train, y_test = get_data(N, M)
 # print(x_test)
 # print(y_test)
 
-x_train = normalize(x_train)
-x_test = normalize(x_test)
-# y_mean = np.mean(y_train)
-# y_train = y_train / max(y_train)
+x_train = preprocessing.normalize(x_train)
+x_test = preprocessing.normalize(x_test)
 
 # print(x_train)
 # print(x_test)
