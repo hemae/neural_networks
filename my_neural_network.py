@@ -2,6 +2,9 @@ import numpy as np
 import random
 
 
+# различные функции активации
+# -----------------------------------------------------
+
 def linear(x, a=1):
     return a * x
 
@@ -40,6 +43,7 @@ def der_relu(x, a=1):
         return 1
 
 
+# собираем все функции в коллекцию
 funcs = {
     'one': {
         'linear': linear,
@@ -56,6 +60,9 @@ funcs = {
 }
 
 
+# -----------------------------------------------------
+
+# действие одного нейрона: входное значение -> f(входное значение)
 def neuron(input_signal, activation_func=None):
     if activation_func == None:
         return input_signal
@@ -63,6 +70,7 @@ def neuron(input_signal, activation_func=None):
         return funcs['one'][activation_func](input_signal)
 
 
+# действие слоя сети: [набор выходных значений предыдущего слоя] + веса -> [набор нейронов настоящего слоя] -> [набор выходных значений настоящего слоя]
 def layer(neurons_number, input_vector, weight_vector, activation_func=None):
     output_vector = []
     for_total_input_vector = []
@@ -75,7 +83,22 @@ def layer(neurons_number, input_vector, weight_vector, activation_func=None):
     return np.array(output_vector), np.array(for_total_input_vector)
 
 
-def network(network_scheme, input_vector, total_weight_vector, activation_func=None, activation_func_output=None):
+# инициализация весов в соответствии со схемой сети; случайно от -0,5 до 0,5
+def initialize_total_weight_vector(network_scheme):
+    total_weight_vector = []
+    for i in range(1, len(network_scheme)):
+        layer_weight_vector = []
+        for j in range(network_scheme[i]):
+            neuron_weight_vector = np.random.rand(network_scheme[i - 1]) - 0.5
+            layer_weight_vector.append(neuron_weight_vector)
+        total_weight_vector.append(np.array(layer_weight_vector))
+
+    return total_weight_vector
+
+
+# алгоритм прямого прохода по сети (возвращает вектор выходных значений)
+def for_propagation(network_scheme, input_vector, total_weight_vector, activation_func=None,
+                    activation_func_output=None):
     vector_data = input_vector
     total_input_vector = []
     total_output_vector = []
@@ -94,18 +117,7 @@ def network(network_scheme, input_vector, total_weight_vector, activation_func=N
     return vector_data, total_input_vector, total_output_vector
 
 
-def initialize_total_weight_vector(network_scheme):
-    total_weight_vector = []
-    for i in range(1, len(network_scheme)):
-        layer_weight_vector = []
-        for j in range(network_scheme[i]):
-            neuron_weight_vector = np.random.rand(network_scheme[i - 1]) - 0.5
-            layer_weight_vector.append(neuron_weight_vector)
-        total_weight_vector.append(np.array(layer_weight_vector))
-
-    return total_weight_vector
-
-
+# алгоритм обратного прохода по сети (возвращает откорректированные веса)
 def back_propagation_iteration(total_weight_vector, total_input_vector, total_output_vector, error, conv_step,
                                activation_func, activation_func_output):
     grad_vector = error * funcs['der'][activation_func_output](total_input_vector[-1])
@@ -120,10 +132,12 @@ def back_propagation_iteration(total_weight_vector, total_input_vector, total_ou
     return total_weight_vector
 
 
+# схема нейросети: 3 - 3 входных сигнала, 2 - два нейрона скрытого слоя, 1 - 1 нейрон выходного слоя
 network_scheme = [3, 2, 1]
-conv_step = 1
-N = 100000
+conv_step = 1  # шаг сходиомсти
+N = 100000  # число итераций
 
+# входные данные ()
 input_data = [
     [[0, 0, 0], [0]],
     [[0, 0, 1], [1]],
@@ -134,25 +148,30 @@ input_data = [
     [[1, 1, 0], [0]],
     [[1, 1, 1], [0]]
 ]
-total_weight_vector = initialize_total_weight_vector(network_scheme)
 
+total_weight_vector = initialize_total_weight_vector(network_scheme)  # инициализируем веса в соотвествии со схемой
+
+# обучаем
 for i in range(N):
     k = random.randint(0, 7)
     input_vector = np.array(input_data[k][0])
     output_vector = np.array(input_data[k][1])
-    forward_propagation_res, total_input_vector, total_output_vector = network(network_scheme, input_vector,
-                                                                               total_weight_vector,
-                                                                               activation_func='sigmoid',
-                                                                               activation_func_output='sigmoid')
+    forward_propagation_res, total_input_vector, total_output_vector = for_propagation(network_scheme, input_vector,
+                                                                                       total_weight_vector,
+                                                                                       activation_func='sigmoid',
+                                                                                       activation_func_output='sigmoid')
     error = forward_propagation_res - output_vector
-    total_weight_vector = back_propagation_iteration(total_weight_vector, total_input_vector, total_output_vector, error,
-                                                     conv_step, activation_func='sigmoid', activation_func_output='sigmoid')
+    total_weight_vector = back_propagation_iteration(total_weight_vector, total_input_vector, total_output_vector,
+                                                     error,
+                                                     conv_step, activation_func='sigmoid',
+                                                     activation_func_output='sigmoid')
 
+# тестим на обучающей выборке
 for i in range(len(input_data)):
     input_vector = np.array(input_data[i][0])
     output_vector = np.array(input_data[i][1])
-    forward_propagation_res, total_input_vector, total_output_vector = network(network_scheme, input_vector,
-                                                                               total_weight_vector,
-                                                                               activation_func='sigmoid',
-                                                                               activation_func_output='sigmoid')
+    forward_propagation_res, total_input_vector, total_output_vector = for_propagation(network_scheme, input_vector,
+                                                                                       total_weight_vector,
+                                                                                       activation_func='sigmoid',
+                                                                                       activation_func_output='sigmoid')
     print(forward_propagation_res)
