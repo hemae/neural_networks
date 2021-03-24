@@ -120,7 +120,7 @@ def back_propagation_iteration(total_weight_vector, total_input_vector, total_ou
     return total_weight_vector
 
 
-network_scheme = [3, 1]
+network_scheme = [3, 2, 1]
 conv_step = 1
 N = 100000
 
