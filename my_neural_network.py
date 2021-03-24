@@ -118,8 +118,8 @@ def for_propagation(network_scheme, input_vector, total_weight_vector, activatio
 
 
 # алгоритм обратного прохода по сети (возвращает откорректированные веса)
-def back_propagation_iteration(total_weight_vector, total_input_vector, total_output_vector, error, conv_step,
-                               activation_func, activation_func_output):
+def back_propagation(total_weight_vector, total_input_vector, total_output_vector, error, conv_step,
+                     activation_func, activation_func_output):
     grad_vector = error * funcs['der'][activation_func_output](total_input_vector[-1])
     for i in reversed(range(len(total_weight_vector))):
         for j in range(len(grad_vector)):
@@ -133,7 +133,7 @@ def back_propagation_iteration(total_weight_vector, total_input_vector, total_ou
 
 
 # схема нейросети: 3 - 3 входных сигнала, 2 - два нейрона скрытого слоя, 1 - 1 нейрон выходного слоя
-network_scheme = [3, 2, 1]
+network_scheme = [3, 2, 2, 1]
 conv_step = 1  # шаг сходиомсти
 N = 100000  # число итераций
 
@@ -161,10 +161,10 @@ for i in range(N):
                                                                                        activation_func='sigmoid',
                                                                                        activation_func_output='sigmoid')
     error = forward_propagation_res - output_vector
-    total_weight_vector = back_propagation_iteration(total_weight_vector, total_input_vector, total_output_vector,
-                                                     error,
-                                                     conv_step, activation_func='sigmoid',
-                                                     activation_func_output='sigmoid')
+    total_weight_vector = back_propagation(total_weight_vector, total_input_vector, total_output_vector,
+                                           error,
+                                           conv_step, activation_func='sigmoid',
+                                           activation_func_output='sigmoid')
 
 # тестим на обучающей выборке
 for i in range(len(input_data)):
