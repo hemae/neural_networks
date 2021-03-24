@@ -1,6 +1,8 @@
 import numpy as np
 import random
 
+import matplotlib.pyplot as plt
+
 
 # различные функции активации
 # -----------------------------------------------------
@@ -132,8 +134,12 @@ def back_propagation(total_weight_vector, total_input_vector, total_output_vecto
     return total_weight_vector
 
 
-# схема нейросети: 3 - 3 входных сигнала, 2 - два нейрона скрытого слоя, 1 - 1 нейрон выходного слоя
-network_scheme = [3, 2, 2, 1]
+# схема нейросети: [3, 4, 2, 1] -
+# 3 нейрона входного слоя (входной сигнал)
+# 4 нейрона первого скрытого слоя
+# 2 нейрона второго скрытого слоя
+# 1 нейрон выходного слоя (выходной сигнал)
+network_scheme = [3, 4, 2, 1]
 conv_step = 1  # шаг сходиомсти
 N = 100000  # число итераций
 
@@ -151,6 +157,8 @@ input_data = [
 
 total_weight_vector = initialize_total_weight_vector(network_scheme)  # инициализируем веса в соотвествии со схемой
 
+error_list = []
+
 # обучаем
 for i in range(N):
     k = random.randint(0, 7)
@@ -161,6 +169,7 @@ for i in range(N):
                                                                                        activation_func='sigmoid',
                                                                                        activation_func_output='sigmoid')
     error = forward_propagation_res - output_vector
+    error_list.append(error[0])
     total_weight_vector = back_propagation(total_weight_vector, total_input_vector, total_output_vector,
                                            error,
                                            conv_step, activation_func='sigmoid',
@@ -175,3 +184,6 @@ for i in range(len(input_data)):
                                                                                        activation_func='sigmoid',
                                                                                        activation_func_output='sigmoid')
     print(forward_propagation_res)
+
+plt.plot(error_list)
+plt.show()
