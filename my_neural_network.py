@@ -10,12 +10,12 @@ def der_linear(x, a=1):
     return a
 
 
-def sigmoida(x):
+def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
 
-def der_sigmoida(x):
-    return sigmoida(x) * (1 - sigmoida(x))
+def der_sigmoid(x):
+    return sigmoid(x) * (1 - sigmoid(x))
 
 
 def tanh(x):
@@ -43,13 +43,13 @@ def der_relu(x, a=1):
 funcs = {
     'one': {
         'linear': linear,
-        'sigmoida': sigmoida,
+        'sigmoid': sigmoid,
         'tanh': tanh,
         'relu': relu
     },
     'der': {
         'linear': der_linear,
-        'sigmoida': der_sigmoida,
+        'sigmoid': der_sigmoid,
         'tanh': der_tanh,
         'relu': der_relu
     }
@@ -120,9 +120,9 @@ def back_propagation_iteration(total_weight_vector, total_input_vector, total_ou
     return total_weight_vector
 
 
-network_scheme = [3, 2, 1]
-conv_step = 0.1
-N = 10000
+network_scheme = [3, 1]
+conv_step = 1
+N = 100000
 
 input_data = [
     [[0, 0, 0], [0]],
@@ -142,17 +142,17 @@ for i in range(N):
     output_vector = np.array(input_data[k][1])
     forward_propagation_res, total_input_vector, total_output_vector = network(network_scheme, input_vector,
                                                                                total_weight_vector,
-                                                                               activation_func='linear',
-                                                                               activation_func_output='linear')
+                                                                               activation_func='sigmoid',
+                                                                               activation_func_output='sigmoid')
     error = forward_propagation_res - output_vector
     total_weight_vector = back_propagation_iteration(total_weight_vector, total_input_vector, total_output_vector, error,
-                                                     conv_step, activation_func='linear', activation_func_output='linear')
+                                                     conv_step, activation_func='sigmoid', activation_func_output='sigmoid')
 
 for i in range(len(input_data)):
     input_vector = np.array(input_data[i][0])
     output_vector = np.array(input_data[i][1])
     forward_propagation_res, total_input_vector, total_output_vector = network(network_scheme, input_vector,
                                                                                total_weight_vector,
-                                                                               activation_func='linear',
-                                                                               activation_func_output='linear')
+                                                                               activation_func='sigmoid',
+                                                                               activation_func_output='sigmoid')
     print(forward_propagation_res)
